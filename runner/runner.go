@@ -1,12 +1,13 @@
 package runner
 
 import (
+	"fmt"
 	"io"
 	"os/exec"
 )
 
 func run() bool {
-	runnerLog("Running...")
+	runnerLog(fmt.Sprintf("Running (%s)...", buildPath()))
 
 	cmd := exec.Command(buildPath())
 

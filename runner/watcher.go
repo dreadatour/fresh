@@ -22,7 +22,7 @@ func watchFolder(path string) {
 					watcherLog("sending event %s", ev)
 					startChannel <- ev.String()
 				}
-			case err := <-watcher.Error:
+			case err = <-watcher.Error:
 				watcherLog("error: %s", err)
 			}
 		}
