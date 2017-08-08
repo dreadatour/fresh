@@ -83,7 +83,12 @@ func createBuildErrorsLog(message string) bool {
 }
 
 func removeBuildErrorsLog() error {
-	err := os.Remove(buildErrorsFilePath())
+	errorsFile := buildErrorsFilePath()
 
+	if _, err := os.Stat(errorsFile); os.IsNotExist(err) {
+		return nil
+	}
+
+	err := os.Remove(buildErrorsFilePath())
 	return err
 }
