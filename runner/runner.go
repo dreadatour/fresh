@@ -33,8 +33,16 @@ func run() bool {
 		<-stopChannel
 		pid := cmd.Process.Pid
 		runnerLog("Killing PID %d", pid)
-		cmd.Process.Kill()
-		cmd.Wait()
+
+		err := cmd.Process.Kill()
+		if err != nil {
+			runnerLog("Killing process error: %s", err)
+		}
+
+		err = cmd.Wait()
+		if err != nil {
+			runnerLog("Waiting for process killed error: %s", err)
+		}
 	}()
 
 	return true
