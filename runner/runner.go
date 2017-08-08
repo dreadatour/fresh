@@ -34,6 +34,7 @@ func run() bool {
 		pid := cmd.Process.Pid
 		runnerLog("Killing PID %d", pid)
 		cmd.Process.Kill()
+		cmd.Wait()
 	}()
 
 	return true
