@@ -1,13 +1,12 @@
 package runner
 
 import (
-	"fmt"
 	"io"
 	"os/exec"
 )
 
 func run() bool {
-	runnerLog(fmt.Sprintf("Running (%s)...", buildPath()))
+	runnerLog("Running (%s)...", buildPath())
 
 	cmd := exec.Command(buildPath())
 
@@ -30,19 +29,18 @@ func run() bool {
 	go io.Copy(appLogWriter{}, stdout)
 
 	go func() {
+		err := cmd.Wait()
+		if err != nil && err.Error() != "signal: killed" {
+			runnerLog("Running error: %s", err)
+			startChannel <- "/"
+		}
+	}()
+
+	go func() {
 		<-stopChannel
 		pid := cmd.Process.Pid
 		runnerLog("Killing PID %d", pid)
-
-		err := cmd.Process.Kill()
-		if err != nil {
-			runnerLog("Killing process error: %s", err)
-		}
-
-		err = cmd.Wait()
-		if err != nil {
-			runnerLog("Waiting for process killed error: %s", err)
-		}
+		cmd.Process.Kill()
 	}()
 
 	return true
